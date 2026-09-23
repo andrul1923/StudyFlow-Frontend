@@ -1,10 +1,14 @@
-import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './auth'
 import { Spinner } from './components/ui'
+import Sidebar from './components/Sidebar'
+import Topbar from './components/Topbar'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
+import Tasks from './pages/Tasks'
 import TaskDetail from './pages/TaskDetail'
 
 function Protected({ children }) {
@@ -14,36 +18,34 @@ function Protected({ children }) {
   return children
 }
 
-function Header() {
-  const { user, logout } = useAuth()
-  const nav = useNavigate()
-  if (!user) return null
+function AppShell() {
+  const [search, setSearch] = useState('')
   return (
-    <header className="topbar">
-      <Link to="/" className="brand">StudyFlow</Link>
-      <div className="topbar-right">
-        <span className="who">{user.username}</span>
-        <button className="btn btn-ghost" onClick={() => { logout(); nav('/login') }}>Salir</button>
+    <div className="app-shell">
+      <Sidebar />
+      <div className="main-col">
+        <Topbar search={search} onSearchChange={setSearch} searchPlaceholder="Buscar proyectos…" />
+        <main className="container">
+          <Routes>
+            <Route path="/" element={<Projects search={search} />} />
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/tasks" element={<Tasks />} />
+            <Route path="/tasks/:id" element={<TaskDetail />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
       </div>
-    </header>
+    </div>
   )
 }
 
 export default function App() {
   const { user, loading } = useAuth()
   return (
-    <div className="app">
-      <Header />
-      <main className="container">
-        <Routes>
-          <Route path="/login" element={user && !loading ? <Navigate to="/" replace /> : <Login />} />
-          <Route path="/register" element={user && !loading ? <Navigate to="/" replace /> : <Register />} />
-          <Route path="/" element={<Protected><Projects /></Protected>} />
-          <Route path="/projects/:id" element={<Protected><ProjectDetail /></Protected>} />
-          <Route path="/tasks/:id" element={<Protected><TaskDetail /></Protected>} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-    </div>
+    <Routes>
+      <Route path="/login" element={user && !loading ? <Navigate to="/" replace /> : <Login />} />
+      <Route path="/register" element={user && !loading ? <Navigate to="/" replace /> : <Register />} />
+      <Route path="/*" element={<Protected><AppShell /></Protected>} />
+    </Routes>
   )
 }

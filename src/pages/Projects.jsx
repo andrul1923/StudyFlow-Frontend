@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
-import { Alert, Modal, Spinner, StatusBadge, fmtDay } from '../components/ui'
+import {
+  Alert, Modal, Spinner, StatusBadge, fmtDay,
+  IconFolder, IconCalendar, IconClipboard, IconUsers, IconArrowRight,
+} from '../components/ui'
 
-export default function Projects() {
+export default function Projects({ search = '' }) {
   const [projects, setProjects] = useState([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState('')
@@ -22,27 +25,43 @@ export default function Projects() {
 
   useEffect(() => { load() }, [])
 
+  const q = search.trim().toLowerCase()
+  const visible = q ? projects.filter((p) => p.name.toLowerCase().includes(q)) : projects
+
   return (
     <div>
       <div className="page-head">
-        <h1>Mis proyectos</h1>
+        <div>
+          <div className="title-row"><IconFolder size={22} /><h1>Mis proyectos</h1></div>
+          <p className="muted small">Administra tus proyectos y accede a su información.</p>
+        </div>
         <button className="btn btn-primary" onClick={() => setShowNew(true)}>+ Nuevo proyecto</button>
       </div>
       <Alert onClose={() => setErr('')}>{err}</Alert>
 
-      {loading ? <Spinner /> : projects.length === 0 ? (
-        <div className="empty">Aún no tienes proyectos. Crea el primero.</div>
+      {loading ? <Spinner /> : visible.length === 0 ? (
+        <div className="empty">{q ? 'Ningún proyecto coincide con la búsqueda.' : 'Aún no tienes proyectos. Crea el primero.'}</div>
       ) : (
         <div className="grid">
-          {projects.map((p) => (
+          {visible.map((p) => (
             <Link key={p.id} to={`/projects/${p.id}`} className="card proj-card">
               <div className="proj-top">
-                <h3>{p.name}</h3>
+                <div className="proj-title">
+                  <span className="proj-icon"><IconFolder size={18} /></span>
+                  <h3>{p.name}</h3>
+                </div>
                 <StatusBadge status={p.status} />
               </div>
-              <p className="muted clamp">{p.description || 'Sin descripción'}</p>
-              <div className="proj-foot muted small">
-                <span>Fecha límite: {fmtDay(p.deadline)}</span>
+              <p className="muted clamp proj-desc">{p.description || 'Sin descripción'}</p>
+              <div className="proj-date">
+                <IconCalendar size={14} /> Fecha límite: {fmtDay(p.deadline)}
+              </div>
+              <div className="proj-foot">
+                <div className="proj-stats">
+                  <span className="proj-stat"><IconClipboard size={14} /> {p.tasks_count ?? 0} tareas</span>
+                  <span className="proj-stat"><IconUsers size={14} /> {p.members_count ?? 0} miembro{p.members_count === 1 ? '' : 's'}</span>
+                </div>
+                <span className="proj-arrow"><IconArrowRight size={15} /></span>
               </div>
             </Link>
           ))}

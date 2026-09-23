@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Config local de cada desarrollador (VITE_API_BASE apunta a su propia máquina/red)
+.env
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
