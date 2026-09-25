@@ -1,14 +1,7 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../auth'
-import { IconHome, IconFolder, IconClipboard, IconUsers, IconActivity, IconChevronDown, IconLogOut } from './ui'
-
-// Ítems sin página propia todavía (viven como tabs dentro de un proyecto).
-// Se muestran para reflejar el diseño, pero no navegan a nada por ahora.
-const SOON = [
-  { label: 'Miembros', icon: IconUsers },
-  { label: 'Actividad', icon: IconActivity },
-]
+import { IconHome, IconFolder, IconClipboard, IconSearch, IconUser, IconChevronDown, IconLogOut } from './ui'
 
 export default function Sidebar() {
   const { user, logout } = useAuth()
@@ -32,11 +25,12 @@ export default function Sidebar() {
         <NavLink to="/tasks" className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
           <IconClipboard size={18} /> Tareas
         </NavLink>
-        {SOON.map(({ label, icon: I }) => (
-          <span key={label} className="sidebar-item disabled" title="Próximamente">
-            <I size={18} /> {label}
-          </span>
-        ))}
+        <NavLink to="/search" className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
+          <IconSearch size={18} /> Buscar proyectos
+        </NavLink>
+        <NavLink to="/profile" className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>
+          <IconUser size={18} /> Mi perfil
+        </NavLink>
       </nav>
 
       <div className="sidebar-user">

@@ -118,6 +118,13 @@ export const api = {
   changeRole: (id, userId, role) => request(`/api/projects/${id}/members/${userId}/`, { method: 'PATCH', body: { role } }),
   removeMember: (id, userId) => request(`/api/projects/${id}/members/${userId}/`, { method: 'DELETE' }),
 
+  // ---- Buscar proyectos / solicitudes de unión ----
+  searchProjects: (q) => request(`/api/projects/search/${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  listJoinRequests: (projectId) => request(`/api/projects/${projectId}/join-requests/`),
+  createJoinRequest: (projectId) => request(`/api/projects/${projectId}/join-requests/`, { method: 'POST', body: {} }),
+  reviewJoinRequest: (projectId, requestId, statusValue) =>
+    request(`/api/projects/${projectId}/join-requests/${requestId}/`, { method: 'PATCH', body: { status: statusValue } }),
+
   // ---- Tasks ----
   listTasks: (projectId, { includeArchived = false } = {}) =>
     request(`/api/projects/${projectId}/tasks/${includeArchived ? '?include_archived=1' : ''}`),

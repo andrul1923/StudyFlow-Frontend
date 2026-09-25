@@ -10,6 +10,8 @@ import Projects from './pages/Projects'
 import ProjectDetail from './pages/ProjectDetail'
 import Tasks from './pages/Tasks'
 import TaskDetail from './pages/TaskDetail'
+import SearchProjects from './pages/SearchProjects'
+import Profile from './pages/Profile'
 
 function Protected({ children }) {
   const { user, loading } = useAuth()
@@ -31,6 +33,8 @@ function AppShell() {
             <Route path="/projects/:id" element={<ProjectDetail />} />
             <Route path="/tasks" element={<Tasks />} />
             <Route path="/tasks/:id" element={<TaskDetail />} />
+            <Route path="/search" element={<SearchProjects />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
