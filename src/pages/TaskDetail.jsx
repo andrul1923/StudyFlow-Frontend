@@ -221,7 +221,7 @@ function Comments({ taskId, archived, currentUser }) {
               <li key={c.id} className="card comment">
                 <div className="comment-head">
                   <strong>{c.author ? c.author.username : '—'}</strong>
-                  <span className="muted small">{fmtDate(c.created_at)}{c.updated_at !== c.created_at && ' (editado)'}</span>
+                  <span className="muted small">{fmtDate(c.created_at)}{new Date(c.updated_at) - new Date(c.created_at) > 1000 && ' (editado)'}</span>
                 </div>
                 {editing === c.id ? (
                   <div className="comment-edit">

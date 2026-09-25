@@ -2,6 +2,7 @@
 // Centraliza: base URL, header Authorization, refresco automático del access
 // cuando expira, y normalización de los distintos formatos de error del backend.
 
+// URL del backend: cada desarrollador la fija en su propio .env (VITE_API_BASE).
 const BASE = import.meta.env.VITE_API_BASE || 'http://127.0.0.1:8000'
 
 const TOKENS = { access: 'sf_access', refresh: 'sf_refresh' }
@@ -117,8 +118,16 @@ export const api = {
   changeRole: (id, userId, role) => request(`/api/projects/${id}/members/${userId}/`, { method: 'PATCH', body: { role } }),
   removeMember: (id, userId) => request(`/api/projects/${id}/members/${userId}/`, { method: 'DELETE' }),
 
+  // ---- Buscar proyectos / solicitudes de unión ----
+  searchProjects: (q) => request(`/api/projects/search/${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  listJoinRequests: (projectId) => request(`/api/projects/${projectId}/join-requests/`),
+  createJoinRequest: (projectId) => request(`/api/projects/${projectId}/join-requests/`, { method: 'POST', body: {} }),
+  reviewJoinRequest: (projectId, requestId, statusValue) =>
+    request(`/api/projects/${projectId}/join-requests/${requestId}/`, { method: 'PATCH', body: { status: statusValue } }),
+
   // ---- Tasks ----
-  listTasks: (projectId) => request(`/api/projects/${projectId}/tasks/`),
+  listTasks: (projectId, { includeArchived = false } = {}) =>
+    request(`/api/projects/${projectId}/tasks/${includeArchived ? '?include_archived=1' : ''}`),
   createTask: (projectId, payload) => request(`/api/projects/${projectId}/tasks/`, { method: 'POST', body: payload }),
   getTask: (id) => request(`/api/tasks/${id}/`),
   updateTask: (id, payload) => request(`/api/tasks/${id}/`, { method: 'PATCH', body: payload }),
