@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
+import { useNotifications } from '../notifications'
 import {
   Alert, Modal, Spinner, StatusBadge, fmtDay,
   IconFolder, IconCalendar, IconClipboard, IconUsers, IconArrowRight,
@@ -11,6 +12,7 @@ export default function Projects({ search = '' }) {
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState('')
   const [showNew, setShowNew] = useState(false)
+  const { data: notif } = useNotifications()
 
   const load = async () => {
     setLoading(true); setErr('')
@@ -49,6 +51,7 @@ export default function Projects({ search = '' }) {
                 <div className="proj-title">
                   <span className="proj-icon"><IconFolder size={18} /></span>
                   <h3>{p.name}</h3>
+                  {notif.projects[p.id] && <span className="dot-new" title="Novedades" />}
                 </div>
                 <StatusBadge status={p.status} />
               </div>

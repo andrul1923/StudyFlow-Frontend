@@ -1,11 +1,14 @@
 import { useEffect, useState, useCallback } from 'react'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { api } from '../api'
 import { useAuth } from '../auth'
+import { useNotifications } from '../notifications'
 import { Alert, Modal, Spinner, StatusBadge, fmtDay } from '../components/ui'
 import TasksPanel from '../components/TasksPanel'
 import MembersPanel from '../components/MembersPanel'
 import ActivitiesPanel from '../components/ActivitiesPanel'
+
+const TABS = ['tasks', 'members', 'activity']
 
 export default function ProjectDetail() {
   const { id } = useParams()
@@ -15,7 +18,11 @@ export default function ProjectDetail() {
   const [members, setMembers] = useState([])
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState('')
-  const [tab, setTab] = useState('tasks')
+  const [searchParams] = useSearchParams()
+  const urlTab = searchParams.get('tab')
+  const [tab, setTab] = useState(TABS.includes(urlTab) ? urlTab : 'tasks')
+  const { data: notif, markSeen } = useNotifications()
+  const counts = notif.projects[id] || {}
   const [showEdit, setShowEdit] = useState(false)
 
   const myRole = (() => {
@@ -41,6 +48,15 @@ export default function ProjectDetail() {
   }, [id, loadMembers])
 
   useEffect(() => { load() }, [load])
+
+  // Llegar desde la campanita (?tab=...) cuando ya estamos en este proyecto.
+  useEffect(() => { if (TABS.includes(urlTab)) setTab(urlTab) }, [urlTab])
+
+  // Abrir una pestaña la marca como vista; si llegan novedades mientras está
+  // abierta, se vuelve a marcar (no tiene sentido avisar de lo que ya se ve).
+  useEffect(() => {
+    if (project && counts[tab] > 0) markSeen(id, tab)
+  }, [project, id, tab, counts[tab]])
 
   const archive = async () => {
     if (!confirm('¿Archivar este proyecto? Dejará de aparecer en tu listado.')) return
@@ -83,9 +99,12 @@ export default function ProjectDetail() {
       <Alert onClose={() => setErr('')}>{err}</Alert>
 
       <div className="tabs">
-        <button className={tab === 'tasks' ? 'tab active' : 'tab'} onClick={() => setTab('tasks')}>Tareas</button>
-        <button className={tab === 'members' ? 'tab active' : 'tab'} onClick={() => setTab('members')}>Miembros</button>
-        <button className={tab === 'activity' ? 'tab active' : 'tab'} onClick={() => setTab('activity')}>Actividad</button>
+        {[['tasks', 'Tareas'], ['members', 'Miembros'], ['activity', 'Actividad']].map(([key, label]) => (
+          <button key={key} className={tab === key ? 'tab active' : 'tab'} onClick={() => setTab(key)}>
+            {label}
+            {tab !== key && counts[key] > 0 && <span className="dot-new" title="Novedades" />}
+          </button>
+        ))}
       </div>
 
       {tab === 'tasks' && <TasksPanel projectId={id} members={members} />}

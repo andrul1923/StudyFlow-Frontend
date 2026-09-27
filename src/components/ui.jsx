@@ -97,6 +97,18 @@ export function fmtDate(iso) {
   return d.toLocaleString('es', { dateStyle: 'medium', timeStyle: 'short' })
 }
 
+// "hace 5 min", "hace 2 h", "hace 3 d"; pasada una semana, fecha corta.
+export function fmtAgo(iso) {
+  const d = new Date(iso)
+  if (isNaN(d)) return ''
+  const s = Math.max(0, (Date.now() - d.getTime()) / 1000)
+  if (s < 60) return 'ahora'
+  if (s < 3600) return `hace ${Math.floor(s / 60)} min`
+  if (s < 86400) return `hace ${Math.floor(s / 3600)} h`
+  if (s < 7 * 86400) return `hace ${Math.floor(s / 86400)} d`
+  return d.toLocaleDateString('es', { dateStyle: 'medium' })
+}
+
 export function fmtDay(iso) {
   if (!iso) return '—'
   const d = new Date(iso + 'T00:00:00')
