@@ -119,6 +119,7 @@ export const api = {
   removeMember: (id, userId) => request(`/api/projects/${id}/members/${userId}/`, { method: 'DELETE' }),
 
   // ---- Buscar proyectos / solicitudes de unión ----
+  listPublicMembers: (projectId) => request(`/api/projects/${projectId}/public-members/`),
   searchProjects: (q) => request(`/api/projects/search/${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   listJoinRequests: (projectId) => request(`/api/projects/${projectId}/join-requests/`),
   createJoinRequest: (projectId) => request(`/api/projects/${projectId}/join-requests/`, { method: 'POST', body: {} }),
@@ -138,6 +139,10 @@ export const api = {
   createComment: (taskId, content) => request(`/api/tasks/${taskId}/comments/`, { method: 'POST', body: { content } }),
   updateComment: (id, content) => request(`/api/comments/${id}/`, { method: 'PATCH', body: { content } }),
   deleteComment: (id) => request(`/api/comments/${id}/`, { method: 'DELETE' }),
+
+  // ---- Notificaciones (novedades sin leer) ----
+  getNotifications: () => request('/api/notifications/'),
+  markSeen: (projectId, section) => request('/api/notifications/seen/', { method: 'POST', body: { project: projectId, section } }),
 
   // ---- Activities ----
   listActivities: (projectId) => request(`/api/projects/${projectId}/activities/`),

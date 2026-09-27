@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './auth'
 import { Spinner } from './components/ui'
+import { NotificationProvider } from './notifications'
 import Sidebar from './components/Sidebar'
 import Topbar from './components/Topbar'
 import Login from './pages/Login'
@@ -23,6 +24,7 @@ function Protected({ children }) {
 function AppShell() {
   const [search, setSearch] = useState('')
   return (
+    <NotificationProvider>
     <div className="app-shell">
       <Sidebar />
       <div className="main-col">
@@ -40,6 +42,7 @@ function AppShell() {
         </main>
       </div>
     </div>
+    </NotificationProvider>
   )
 }
 

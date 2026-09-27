@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../api'
-import { Alert, Spinner, StatusBadge, IconSearch, IconFolder, IconUsers } from '../components/ui'
+import { Alert, Modal, RoleBadge, Spinner, StatusBadge, IconSearch, IconFolder, IconUsers } from '../components/ui'
 
 export default function SearchProjects() {
   const [q, setQ] = useState('')
@@ -9,6 +9,7 @@ export default function SearchProjects() {
   const [loading, setLoading] = useState(true)
   const [err, setErr] = useState('')
   const [busyId, setBusyId] = useState(null)
+  const [membersOf, setMembersOf] = useState(null)
 
   const load = async (query) => {
     setLoading(true); setErr('')
@@ -67,7 +68,9 @@ export default function SearchProjects() {
               <p className="muted clamp proj-desc">{p.description || 'Sin descripción'}</p>
               <div className="proj-foot">
                 <div className="proj-stats">
-                  <span className="proj-stat"><IconUsers size={14} /> {p.members_count} miembro{p.members_count === 1 ? '' : 's'}</span>
+                  <button className="proj-stat proj-stat-btn" title="Ver miembros" onClick={() => setMembersOf(p)}>
+                    <IconUsers size={14} /> {p.members_count} miembro{p.members_count === 1 ? '' : 's'}
+                  </button>
                 </div>
                 {p.my_status === 'MEMBER' ? (
                   <Link to={`/projects/${p.id}`} className="btn btn-mini">Abrir</Link>
@@ -83,6 +86,34 @@ export default function SearchProjects() {
           ))}
         </div>
       )}
+
+      {membersOf && <MembersModal project={membersOf} onClose={() => setMembersOf(null)} />}
     </div>
+  )
+}
+
+function MembersModal({ project, onClose }) {
+  const [members, setMembers] = useState(null)
+  const [err, setErr] = useState('')
+
+  useEffect(() => {
+    api.listPublicMembers(project.id).then(setMembers).catch((ex) => setErr(ex.message))
+  }, [project.id])
+
+  return (
+    <Modal title={`Miembros de ${project.name}`} onClose={onClose}>
+      <Alert onClose={() => setErr('')}>{err}</Alert>
+      {members === null && !err ? <Spinner /> : (
+        <ul className="member-list">
+          {(members || []).map((m) => (
+            <li key={m.username}>
+              <span className="avatar avatar-sm">{m.username[0].toUpperCase()}</span>
+              <span className="member-name">{m.username}</span>
+              <RoleBadge role={m.role} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </Modal>
   )
 }

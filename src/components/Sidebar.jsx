@@ -16,7 +16,7 @@ export default function Sidebar() {
       </NavLink>
 
       <nav className="sidebar-nav">
-        <NavLink to="/" end className="sidebar-item">
+        <NavLink to="/" end className={() => 'sidebar-item'}>
           <IconHome size={18} /> Inicio
         </NavLink>
         <NavLink to="/" end className={({ isActive }) => `sidebar-item${isActive ? ' active' : ''}`}>

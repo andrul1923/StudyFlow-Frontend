@@ -136,6 +136,12 @@ h3 { font-size: 1.05rem; margin: 0; }
 
 /* Buscar proyectos */
 .search-page-input { max-width: 420px; margin-bottom: 1.25rem; }
+.proj-stat-btn { background: none; border: none; padding: 0; font: inherit; color: inherit; cursor: pointer; }
+.proj-stat-btn:hover { color: var(--primary); text-decoration: underline; }
+.member-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .6rem; }
+.member-list li { display: flex; align-items: center; gap: .6rem; }
+.member-name { flex: 1; font-weight: 600; }
+.avatar-sm { width: 26px; height: 26px; font-size: .75rem; }
 
 /* Mi perfil */
 .profile-card { display: flex; align-items: center; gap: 1rem; max-width: 420px; }
@@ -264,3 +270,24 @@ textarea { resize: vertical; }
   .task-row { flex-direction: column; align-items: flex-start; }
   .task-meta { justify-content: flex-start; }
 }
+
+/* Novedades / notificaciones */
+.dot-new { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #22c55e;
+  margin-left: .4rem; flex-shrink: 0; vertical-align: middle; }
+.tab { position: relative; }
+.notif { position: relative; }
+.notif .icon-btn { position: relative; }
+.notif-badge { position: absolute; top: 1px; right: 0; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 999px;
+  background: #22c55e; color: #fff; font-size: .68rem; font-weight: 700; line-height: 16px; text-align: center; }
+.notif-menu { position: absolute; top: calc(100% + .4rem); right: 0; width: 340px; max-height: 420px; overflow-y: auto;
+  background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow);
+  z-index: 40; }
+.notif-head { padding: .7rem .9rem; font-weight: 700; border-bottom: 1px solid var(--border); }
+.notif-empty { padding: 1.2rem .9rem; text-align: center; }
+.notif-list { list-style: none; margin: 0; padding: 0; }
+.notif-item { width: 100%; display: flex; align-items: flex-start; gap: .55rem; padding: .65rem .9rem; text-align: left;
+  background: none; border: none; border-bottom: 1px solid var(--border); color: var(--text); cursor: pointer; font: inherit; }
+.notif-item:hover { background: var(--hover-bg); }
+.notif-item .dot-new { margin: .35rem 0 0; }
+.notif-body { display: flex; flex-direction: column; gap: .15rem; min-width: 0; }
+.notif-text { font-size: .88rem; overflow-wrap: anywhere; }
